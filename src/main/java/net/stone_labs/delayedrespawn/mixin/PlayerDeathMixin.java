@@ -21,6 +21,6 @@ public class PlayerDeathMixin
         String playerID = player.getEntityName();
 
         registerDeath(player);
-        server.getCommandManager().execute(server.getCommandSource(), String.format("/kick %s You died :(\nYou can reconnect in 60 seconds.", playerID));
+        server.getCommandManager().execute(server.getCommandSource(), String.format("/kick %s You died :(\nYou can reconnect once your cooldown has expired.", playerID));
     }
 }
