@@ -1,8 +1,5 @@
 package net.stone_labs.delayedrespawn;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.reflect.TypeToken;
 import net.minecraft.server.network.ServerPlayerEntity;
 import com.google.gson.Gson;
 
@@ -10,7 +7,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +33,20 @@ public class DeathTimeManger
             return LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - LastDeathTime;
         }
     }
+    public static class DeathTimeFile
+    {
+        long secondsTillReconnect = 60;
+        List<DeathTimeEntry> DateTimeEntries;
+
+        public DeathTimeFile()
+        {
+            DateTimeEntries = new ArrayList<DeathTimeEntry>();
+        }
+        public DeathTimeFile(List<DeathTimeEntry> deathTimeEntries)
+        {
+            DateTimeEntries = deathTimeEntries;
+        }
+    }
 
     public static final String DataFilePath = "./timeouts.json";
     private static final Gson gson = new Gson();
@@ -44,8 +54,8 @@ public class DeathTimeManger
     // Returns seconds left in ban
     public static long getTimeSinceLastDeath(ServerPlayerEntity player)
     {
-        List<DeathTimeEntry> timeouts = readDeaths();
-        for (DeathTimeEntry timeout : timeouts)
+        DeathTimeFile timeouts = readDeaths();
+        for (DeathTimeEntry timeout : timeouts.DateTimeEntries)
             if (timeout.PlayerEntityName.equals(player.getEntityName()))
                 return timeout.getTimeoutSeconds();
 
@@ -55,15 +65,15 @@ public class DeathTimeManger
     public static void createConfigIfNotExist() throws IOException
     {
         if (!Files.exists(Paths.get(DataFilePath)))
-            Files.write(Paths.get(DataFilePath), gson.toJson(new ArrayList<DeathTimeEntry>()).getBytes());
+            Files.write(Paths.get(DataFilePath), gson.toJson(new DeathTimeFile()).getBytes());
     }
 
     public static void registerDeath(ServerPlayerEntity player)
     {
-        List<DeathTimeEntry> timeouts = readDeaths();
+        DeathTimeFile timeouts = readDeaths();
 
         boolean found = false;
-        for (DeathTimeEntry timeout : timeouts)
+        for (DeathTimeEntry timeout : timeouts.DateTimeEntries)
             if (timeout.PlayerEntityName.equals(player.getEntityName()))
             {
                 timeout.setToNow();
@@ -72,7 +82,7 @@ public class DeathTimeManger
             }
 
         if (!found)
-            timeouts.add(new DeathTimeEntry(player.getEntityName()));
+            timeouts.DateTimeEntries.add(new DeathTimeEntry(player.getEntityName()));
 
         try
         {
@@ -86,13 +96,28 @@ public class DeathTimeManger
         }
     }
 
-    public static List<DeathTimeEntry> readDeaths()
+    public static DeathTimeFile readDeaths()
     {
         try
         {
             createConfigIfNotExist();
             String file = new String(Files.readAllBytes(Paths.get(DataFilePath)));
-            return gson.fromJson(file, new TypeToken<ArrayList<DeathTimeEntry>>(){}.getType());
+            return gson.fromJson(file, DeathTimeFile.class);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException("Could not read timeout file!");
+        }
+    }
+
+    public static long readDeathTimeoutConfig()
+    {
+        try
+        {
+            createConfigIfNotExist();
+            String file = new String(Files.readAllBytes(Paths.get(DataFilePath)));
+            return gson.fromJson(file, DeathTimeFile.class).secondsTillReconnect;
         }
         catch (IOException e)
         {

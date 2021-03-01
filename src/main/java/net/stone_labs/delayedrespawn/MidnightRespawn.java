@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 
 import static net.stone_labs.delayedrespawn.DeathTimeManger.getTimeSinceLastDeath;
+import static net.stone_labs.delayedrespawn.DeathTimeManger.readDeathTimeoutConfig;
 
 public class MidnightRespawn implements DedicatedServerModInitializer
 {
@@ -24,9 +25,10 @@ public class MidnightRespawn implements DedicatedServerModInitializer
         public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server)
         {
             long secondsSinceDeath = getTimeSinceLastDeath(handler.player);
-            if (secondsSinceDeath < waitTime)
+            long secondsTillReconnect = readDeathTimeoutConfig();
+            if (secondsSinceDeath < secondsTillReconnect)
             {
-                long timeout = waitTime - secondsSinceDeath;
+                long timeout = secondsTillReconnect - secondsSinceDeath;
                 handler.disconnect(new LiteralText(
                         String.format("You still have to wait %dh %dm %ds before connecting.",
                                 timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
