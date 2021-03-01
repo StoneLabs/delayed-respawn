@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.stone_labs.delayedrespawn.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "PlayerDeathMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
