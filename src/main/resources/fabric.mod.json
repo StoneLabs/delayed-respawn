@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "delayedrespawn",
+  "version": "${version}",
+  "name": "Delayed Respawn",
+  "description": "Description todo",
+  "license": "UNLICENSE",
+  "authors": [
+    "StoneLabs <levyehrstein@googlemail.com>",
+    "Luke322"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/"
+  },
+  "icon": "assets/delayedrespawn/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [],
+    "client": [],
+    "server": [
+      "net.stone_labs.delayedrespawn.MidnightRespawn"
+    ]
+  },
+  "mixins": [
+    "delayedrespawn.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}
