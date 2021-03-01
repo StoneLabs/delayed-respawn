@@ -3,15 +3,16 @@
   "id": "delayedrespawn",
   "version": "${version}",
   "name": "Delayed Respawn",
-  "description": "Description todo",
+  "description": "Bans a player once he died.",
   "license": "UNLICENSE",
   "authors": [
     "StoneLabs <levyehrstein@googlemail.com>",
-    "Luke322"
+    "Luke322",
+    "Michael 'Actron' Holzmann <17412080+Actr0n@users.noreply.github.com>
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/"
+    "homepage": "https://stone-labs.net//",
+    "sources": "https://github.com/StoneLabs/delayed-respawn"
   },
   "icon": "assets/delayedrespawn/icon.png",
   "environment": "*",
