@@ -39,8 +39,8 @@ public class DelayedRespawn implements DedicatedServerModInitializer
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final String MOD_ID = "midnightrespawn";
-    public static final String MOD_NAME = "Midnight Respawn";
+    public static final String MOD_ID = "delayedrespawn";
+    public static final String MOD_NAME = "Delayed Respawn";
     public static final String VERSION = "1.0.0";
 
     @Override
