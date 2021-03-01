@@ -15,11 +15,11 @@ import org.apache.logging.log4j.Logger;
 import static net.stone_labs.delayedrespawn.DeathTimeManger.getTimeSinceLastDeath;
 import static net.stone_labs.delayedrespawn.DeathTimeManger.readDeathTimeoutConfig;
 
-public class MidnightRespawn implements DedicatedServerModInitializer
+public class DelayedRespawn implements DedicatedServerModInitializer
 {
     public final static long waitTime = 60;
 
-    public class PlayerJoinEvent implements ServerPlayConnectionEvents.Join
+    public static class PlayerJoinEvent implements ServerPlayConnectionEvents.Join
     {
         @Override
         public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server)
