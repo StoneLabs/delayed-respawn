@@ -19,7 +19,7 @@
     "main": [],
     "client": [],
     "server": [
-      "net.stone_labs.delayedrespawn.MidnightRespawn"
+      "net.stone_labs.delayedrespawn.DelayedRespawn"
     ]
   },
   "mixins": [
