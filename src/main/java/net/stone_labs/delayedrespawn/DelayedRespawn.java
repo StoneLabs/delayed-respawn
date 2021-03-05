@@ -17,8 +17,6 @@ import static net.stone_labs.delayedrespawn.DeathTimeManger.readDeathTimeoutConf
 
 public class DelayedRespawn implements DedicatedServerModInitializer
 {
-    public final static long waitTime = 60;
-
     public static class PlayerJoinEvent implements ServerPlayConnectionEvents.Join
     {
         @Override
