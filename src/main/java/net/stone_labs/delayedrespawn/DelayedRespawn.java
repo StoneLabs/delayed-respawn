@@ -3,14 +3,18 @@ package net.stone_labs.delayedrespawn;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.network.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
+import java.util.UUID;
 
 import static net.stone_labs.delayedrespawn.DeathTimeManger.getTimeSinceLastDeath;
 import static net.stone_labs.delayedrespawn.DeathTimeManger.readDeathTimeoutConfig;
@@ -31,6 +35,10 @@ public class DelayedRespawn implements DedicatedServerModInitializer
                         String.format("You still have to wait %dh %dm %ds before connecting.",
                                 timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
                 ).formatted(Formatting.RED));
+                server.getPlayerManager().broadcastChatMessage(new LiteralText(
+                        String.format("%s still has to wait %dh %dm %ds before connecting.",
+                                handler.player.getEntityName(), timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
+                ).formatted(Formatting.RED), MessageType.CHAT, handler.player.getUuid());
             }
         }
     }

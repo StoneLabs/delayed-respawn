@@ -3,6 +3,8 @@ package net.stone_labs.delayedrespawn.mixin;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +23,6 @@ public class PlayerDeathMixin
         String playerID = player.getEntityName();
 
         registerDeath(player);
-        server.getCommandManager().execute(server.getCommandSource(), String.format("/kick %s You died :(\nYou can reconnect once your cooldown has expired.", playerID));
+        player.networkHandler.disconnect(new LiteralText("You died :(\nYou can reconnect once your cooldown has expired."));
     }
 }
