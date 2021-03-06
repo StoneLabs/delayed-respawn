@@ -49,12 +49,7 @@ public class DeathTimeManger
 
         public DeathTimeFile()
         {
-            DateTimeEntries = new ArrayList<DeathTimeEntry>();
-        }
-
-        public DeathTimeFile(List<DeathTimeEntry> deathTimeEntries)
-        {
-            DateTimeEntries = deathTimeEntries;
+            DateTimeEntries = new ArrayList<>();
         }
     }
 
@@ -123,16 +118,6 @@ public class DeathTimeManger
 
     public static long readDeathTimeoutConfig()
     {
-        try
-        {
-            createConfigIfNotExist();
-            String file = new String(Files.readAllBytes(Paths.get(DataFilePath)));
-            return gson.fromJson(file, DeathTimeFile.class).secondsTillReconnect;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException("Could not read timeout file!");
-        }
+        return readDeaths().secondsTillReconnect;
     }
 }
