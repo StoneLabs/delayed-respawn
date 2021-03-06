@@ -9,16 +9,19 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DeathTimeManger
 {
     public static class DeathTimeEntry
     {
+        public UUID PlayerUUID;
         public String PlayerEntityName;
         public long LastDeathTime;
 
-        public DeathTimeEntry(String playerEntityName)
+        public DeathTimeEntry(UUID playerUUID, String playerEntityName)
         {
+            this.PlayerUUID = playerUUID;
             this.PlayerEntityName = playerEntityName;
             setToNow();
         }
@@ -32,7 +35,13 @@ public class DeathTimeManger
         {
             return LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - LastDeathTime;
         }
+
+        public boolean equalsPlayer(ServerPlayerEntity player)
+        {
+            return this.PlayerUUID.equals(player.getUuid());
+        }
     }
+
     public static class DeathTimeFile
     {
         long secondsTillReconnect = 60;
@@ -42,6 +51,7 @@ public class DeathTimeManger
         {
             DateTimeEntries = new ArrayList<DeathTimeEntry>();
         }
+
         public DeathTimeFile(List<DeathTimeEntry> deathTimeEntries)
         {
             DateTimeEntries = deathTimeEntries;
@@ -56,7 +66,7 @@ public class DeathTimeManger
     {
         DeathTimeFile timeouts = readDeaths();
         for (DeathTimeEntry timeout : timeouts.DateTimeEntries)
-            if (timeout.PlayerEntityName.equals(player.getEntityName()))
+            if (timeout.equalsPlayer(player))
                 return timeout.getTimeoutSeconds();
 
         return Long.MAX_VALUE;
@@ -74,7 +84,7 @@ public class DeathTimeManger
 
         boolean found = false;
         for (DeathTimeEntry timeout : timeouts.DateTimeEntries)
-            if (timeout.PlayerEntityName.equals(player.getEntityName()))
+            if (timeout.equalsPlayer(player))
             {
                 timeout.setToNow();
                 found = true;
@@ -82,7 +92,7 @@ public class DeathTimeManger
             }
 
         if (!found)
-            timeouts.DateTimeEntries.add(new DeathTimeEntry(player.getEntityName()));
+            timeouts.DateTimeEntries.add(new DeathTimeEntry(player.getUuid(), player.getEntityName()));
 
         try
         {
