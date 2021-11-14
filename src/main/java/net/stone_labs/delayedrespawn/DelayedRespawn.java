@@ -58,6 +58,7 @@ public class DelayedRespawn implements DedicatedServerModInitializer
 
         // Add command to display artifacts for debugging
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> PardonDeathCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> TimeoutsCommand.register(dispatcher));
     }
 
     public static int getDeathTimeoutLength(MinecraftServer server)
