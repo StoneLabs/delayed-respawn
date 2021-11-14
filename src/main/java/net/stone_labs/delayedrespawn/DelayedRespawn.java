@@ -1,20 +1,18 @@
 package net.stone_labs.delayedrespawn;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static net.stone_labs.delayedrespawn.DeathTimeManger.getTimeSinceLastDeath;
-import static net.stone_labs.delayedrespawn.DeathTimeManger.readDeathTimeoutConfig;
 
 public class DelayedRespawn implements DedicatedServerModInitializer
 {
@@ -23,8 +21,8 @@ public class DelayedRespawn implements DedicatedServerModInitializer
         @Override
         public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server)
         {
-            long secondsSinceDeath = getTimeSinceLastDeath(handler.player);
-            long secondsTillReconnect = readDeathTimeoutConfig();
+            long secondsSinceDeath = DeathTimeFile.getInstance().getSecondsSinceDeath(handler.player).orElse(Long.MAX_VALUE);
+            long secondsTillReconnect = DeathTimeFile.getInstance().getDeathTimeoutLength();
             if (secondsSinceDeath < secondsTillReconnect)
             {
                 long timeout = secondsTillReconnect - secondsSinceDeath;
