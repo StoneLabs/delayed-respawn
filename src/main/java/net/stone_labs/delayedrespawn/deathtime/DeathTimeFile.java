@@ -74,6 +74,21 @@ public class DeathTimeFile
         write();
     }
 
+    public void unpardonLastDeath(ServerPlayerEntity player)
+    {
+        unpardonLastDeath(player.getGameProfile());
+    }
+    public void unpardonLastDeath(GameProfile player)
+    {
+        Optional<DeathTimeEntry> entry = getPlayerEntry(player);
+
+        if (entry.isEmpty())
+            return;
+
+        entry.get().unpardonLastDeath();
+        write();
+    }
+
     public void registerDeath(ServerPlayerEntity player)
     {
         Optional<DeathTimeEntry> entry = getPlayerEntry(player);
@@ -142,6 +157,16 @@ public class DeathTimeFile
         return this.entries.stream()
                 .filter(x -> x.getSecondsSinceDeath() < timeout)
                 .filter(x -> !x.isPardonLastDeath() || ignorePardon)
+                .map(DeathTimeEntry::getProfile)
+                .filter(Objects::nonNull)
+                .map(GameProfile::getName)
+                .toArray(String[]::new);
+    }
+
+    public String[] getPardonedNames()
+    {
+        return this.entries.stream()
+                .filter(DeathTimeEntry::isPardonLastDeath)
                 .map(DeathTimeEntry::getProfile)
                 .filter(Objects::nonNull)
                 .map(GameProfile::getName)
