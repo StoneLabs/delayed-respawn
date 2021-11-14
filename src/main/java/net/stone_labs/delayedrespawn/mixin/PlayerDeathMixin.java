@@ -28,7 +28,7 @@ public class PlayerDeathMixin
         player.networkHandler.disconnect(new LiteralText("You died :(\nYou can reconnect once your cooldown has expired."));
 
         long timeout = readDeathTimeoutConfig();
-        server.getPlayerManager().broadcastChatMessage(new LiteralText(
+        server.getPlayerManager().broadcast(new LiteralText(
                 String.format("%s died and has to take %sh %sm %ss timeout.",
                         player.getEntityName(), timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
         ).formatted(Formatting.RED), MessageType.CHAT, player.getUuid());

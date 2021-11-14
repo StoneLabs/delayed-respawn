@@ -1,5 +1,6 @@
 package net.stone_labs.delayedrespawn;
 
+import com.google.gson.GsonBuilder;
 import net.minecraft.server.network.ServerPlayerEntity;
 import com.google.gson.Gson;
 
@@ -54,7 +55,7 @@ public class DeathTimeManger
     }
 
     public static final String DataFilePath = "./timeouts.json";
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     // Returns seconds left in ban
     public static long getTimeSinceLastDeath(ServerPlayerEntity player)
@@ -91,7 +92,6 @@ public class DeathTimeManger
 
         try
         {
-            Gson gson = new Gson();
             Files.write(Paths.get(DataFilePath), gson.toJson(timeouts).getBytes());
         }
         catch (IOException e)
