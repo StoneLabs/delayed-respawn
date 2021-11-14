@@ -74,12 +74,12 @@ public class DeathTimeEntry
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeathTimeEntry that = (DeathTimeEntry) o;
-        return Objects.equals(uuid, that.uuid) && Objects.equals(name, that.name);
+        return Objects.equals(this.getProfile(), that.getProfile());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(uuid, name);
+        return this.getProfile().hashCode();
     }
 }
