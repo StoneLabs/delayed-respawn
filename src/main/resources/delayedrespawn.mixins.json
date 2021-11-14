@@ -3,7 +3,8 @@
   "package": "net.stone_labs.delayedrespawn.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "PlayerDeathMixin"
+    "PlayerDeathMixin",
+    "PlayerManagerMixin"
   ],
   "client": [],
   "server": [],
