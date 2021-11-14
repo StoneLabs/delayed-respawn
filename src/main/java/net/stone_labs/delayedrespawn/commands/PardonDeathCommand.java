@@ -6,16 +6,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.GameProfileArgumentType;
-import net.minecraft.server.BannedPlayerList;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Texts;
-import net.minecraft.text.TranslatableText;
 import net.stone_labs.delayedrespawn.DelayedRespawn;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import static net.minecraft.command.argument.GameProfileArgumentType.getProfileArgument;
 import static net.minecraft.server.command.CommandManager.argument;

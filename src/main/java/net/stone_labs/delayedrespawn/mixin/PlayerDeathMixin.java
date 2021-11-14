@@ -30,7 +30,7 @@ public class PlayerDeathMixin
 
         long timeout = DelayedRespawn.getDeathTimeoutLength(server);
         server.getPlayerManager().broadcast(new LiteralText(
-                String.format("%s died and has to take %sh %sm %ss timeout.",
+                String.format("%s died and has to take %sh %sm %ss timeout",
                         player.getEntityName(), timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
         ).formatted(Formatting.RED), MessageType.CHAT, player.getUuid());
     }
