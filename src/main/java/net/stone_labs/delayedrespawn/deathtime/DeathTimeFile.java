@@ -10,17 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DeathTimeFile
 {
     private static final DeathTimeFile INSTANCE = new DeathTimeFile("./timeouts.json");
     public static DeathTimeFile getInstance() { return INSTANCE; }
 
-    private List<DeathTimeEntry> entries = new ArrayList<>();
+    private Set<DeathTimeEntry> entries = new HashSet<>();
 
     private final Path file;
     private final transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -33,6 +31,11 @@ public class DeathTimeFile
             write();
         else
             read();
+    }
+
+    public List<DeathTimeEntry> getEntries()
+    {
+        return new ArrayList<>(entries);
     }
 
     public boolean containsPlayer(@NotNull ServerPlayerEntity player)
@@ -187,7 +190,7 @@ public class DeathTimeFile
         try
         {
             String content = new String(Files.readAllBytes(file));
-            this.entries = gson.fromJson(content, new TypeToken<List<DeathTimeEntry>>(){}.getType());
+            this.entries = gson.fromJson(content, new TypeToken<Set<DeathTimeEntry>>(){}.getType());
         }
         catch (Exception e)
         {

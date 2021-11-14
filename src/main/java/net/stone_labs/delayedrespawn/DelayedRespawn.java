@@ -14,6 +14,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameRules;
 import net.stone_labs.delayedrespawn.commands.PardonDeathCommand;
+import net.stone_labs.delayedrespawn.commands.TimeoutsCommand;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeEntry;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 import org.apache.logging.log4j.Level;
@@ -33,12 +34,11 @@ public class DelayedRespawn implements DedicatedServerModInitializer
             if (secondsLeft.isPresent())
             {
                 handler.disconnect(new LiteralText(
-                        String.format("You still have to wait %dh %dm %ds before connecting.",
-                                secondsLeft.get() / 60 / 60, secondsLeft.get() / 60 % 60, secondsLeft.get() % 60)
+                        String.format("You still have to wait %s before connecting.", Utils.FormatDuration(secondsLeft.get()))
                 ).formatted(Formatting.RED));
                 server.getPlayerManager().broadcast(new LiteralText(
-                        String.format("%s still has to wait %dh %dm %ds before connecting.",
-                                handler.player.getEntityName(), secondsLeft.get() / 60 / 60, secondsLeft.get() / 60 % 60, secondsLeft.get() % 60)
+                        String.format("%s still has to wait %s before connecting.",
+                                handler.player.getEntityName(), Utils.FormatDuration(secondsLeft.get()))
                 ).formatted(Formatting.RED), MessageType.CHAT, handler.player.getUuid());
             }
         }
