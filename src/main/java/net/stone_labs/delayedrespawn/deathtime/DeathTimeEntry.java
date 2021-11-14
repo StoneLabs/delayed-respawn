@@ -13,6 +13,7 @@ public class DeathTimeEntry
     private final UUID uuid;
     private final String name;
     private long lastDeath;
+    private boolean pardonLastDeath = false;
 
     public DeathTimeEntry(GameProfile profile)
     {
@@ -26,17 +27,33 @@ public class DeathTimeEntry
         return new GameProfile(uuid, name);
     }
 
-    public long getLastDeath()
+    public long getLastDeathEpoch()
     {
         return lastDeath;
+    }
+
+    public LocalDateTime getLastDeath()
+    {
+        return LocalDateTime.ofEpochSecond(getLastDeathEpoch(), 0, ZoneOffset.UTC);
+    }
+
+    public boolean isPardonLastDeath()
+    {
+        return pardonLastDeath;
+    }
+
+    protected void pardonLastDeath()
+    {
+        this.pardonLastDeath = true;
     }
 
     protected void setToNow()
     {
         this.lastDeath = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        this.pardonLastDeath = false;
     }
 
-    public long getTimeoutSeconds()
+    public long getSecondsSinceDeath()
     {
         return LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - lastDeath;
     }

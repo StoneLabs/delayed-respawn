@@ -1,20 +1,26 @@
 package net.stone_labs.delayedrespawn;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.command.PardonCommand;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameRules;
+import net.stone_labs.delayedrespawn.commands.PardonDeathCommand;
+import net.stone_labs.delayedrespawn.deathtime.DeathTimeEntry;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 public class DelayedRespawn implements DedicatedServerModInitializer
 {
@@ -23,19 +29,16 @@ public class DelayedRespawn implements DedicatedServerModInitializer
         @Override
         public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server)
         {
-            long secondsSinceDeath = DeathTimeFile.getInstance().getSecondsSinceDeath(handler.player).orElse(Long.MAX_VALUE);
-            int secondsTillReconnect = DelayedRespawn.getDeathTimeoutLength(server);
-
-            if (secondsSinceDeath < secondsTillReconnect)
+            Optional<Integer> secondsLeft = DeathTimeFile.getInstance().getSecondsLeftInTimeout(handler.player, DelayedRespawn.getDeathTimeoutLength(server));
+            if (secondsLeft.isPresent())
             {
-                long timeout = secondsTillReconnect - secondsSinceDeath;
                 handler.disconnect(new LiteralText(
                         String.format("You still have to wait %dh %dm %ds before connecting.",
-                                timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
+                                secondsLeft.get() / 60 / 60, secondsLeft.get() / 60 % 60, secondsLeft.get() % 60)
                 ).formatted(Formatting.RED));
                 server.getPlayerManager().broadcast(new LiteralText(
                         String.format("%s still has to wait %dh %dm %ds before connecting.",
-                                handler.player.getEntityName(), timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
+                                handler.player.getEntityName(), secondsLeft.get() / 60 / 60, secondsLeft.get() / 60 % 60, secondsLeft.get() % 60)
                 ).formatted(Formatting.RED), MessageType.CHAT, handler.player.getUuid());
             }
         }
@@ -52,6 +55,9 @@ public class DelayedRespawn implements DedicatedServerModInitializer
     {
         ServerPlayConnectionEvents.JOIN.register(new PlayerJoinEvent());
         LOGGER.log(Level.INFO, "Initialized {} version {}", MOD_NAME, VERSION);
+
+        // Add command to display artifacts for debugging
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> PardonDeathCommand.register(dispatcher));
     }
 
     public static int getDeathTimeoutLength(MinecraftServer server)
