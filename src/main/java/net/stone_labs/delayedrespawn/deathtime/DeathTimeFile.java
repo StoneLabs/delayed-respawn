@@ -56,12 +56,22 @@ public class DeathTimeFile
     public Optional<Long> getSecondsSinceDeath(ServerPlayerEntity player)
     {
         Optional<DeathTimeEntry> entry = getPlayerEntry(player);
-        return entry.map(DeathTimeEntry::getTimeoutSeconds);
+        return entry.map(DeathTimeEntry::getSecondsSinceDeath);
     }
 
-    public String[] getNames()
+    public void pardonLastDeath(ServerPlayerEntity player)
     {
-        return this.entries.stream().map(DeathTimeEntry::getProfile).filter(Objects::nonNull).map(GameProfile::getName).toArray(String[]::new);
+        pardonLastDeath(player.getGameProfile());
+    }
+    public void pardonLastDeath(GameProfile player)
+    {
+        Optional<DeathTimeEntry> entry = getPlayerEntry(player);
+
+        if (entry.isEmpty())
+            return;
+
+        entry.get().pardonLastDeath();
+        write();
     }
 
     public void registerDeath(ServerPlayerEntity player)
@@ -74,6 +84,77 @@ public class DeathTimeFile
             entries.add(new DeathTimeEntry(player.getGameProfile()));
 
         write();
+    }
+
+    public boolean isInTimeout(ServerPlayerEntity player, int timeout)
+    {
+        return isInTimeout(player, timeout, false);
+    }
+    public boolean isInTimeout(ServerPlayerEntity player, int timeout, boolean ignorePardon)
+    {
+        return isInTimeout(player.getGameProfile(), timeout, false);
+    }
+    public boolean isInTimeout(GameProfile player, int timeout)
+    {
+        return isInTimeout(player, timeout, false);
+    }
+    public boolean isInTimeout(GameProfile player, int timeout, boolean ignorePardon)
+    {
+        return getSecondsLeftInTimeout(player, timeout, ignorePardon).isPresent();
+    }
+
+    public Optional<Integer> getSecondsLeftInTimeout(ServerPlayerEntity player, int timeout)
+    {
+        return getSecondsLeftInTimeout(player, timeout, false);
+    }
+    public Optional<Integer> getSecondsLeftInTimeout(ServerPlayerEntity player, int timeout, boolean ignorePardon)
+    {
+        return getSecondsLeftInTimeout(player.getGameProfile(), timeout, false);
+    }
+    public Optional<Integer> getSecondsLeftInTimeout(GameProfile player, int timeout)
+    {
+        return getSecondsLeftInTimeout(player, timeout, false);
+    }
+    public Optional<Integer> getSecondsLeftInTimeout(GameProfile player, int timeout, boolean ignorePardon)
+    {
+        Optional<DeathTimeEntry> entry = getPlayerEntry(player);
+
+        if (entry.isEmpty())
+            return Optional.empty();
+
+        if (entry.get().isPardonLastDeath() && !ignorePardon)
+            return Optional.empty();
+
+        if (entry.get().getSecondsSinceDeath() > timeout)
+            return Optional.empty();
+
+        // Since timeout >= secondsSinceDeath, the difference must be >= 0 and can
+        // not be bigger than int.maxvalue the conversion is therefore safe.
+        return Optional.of(timeout - (int)entry.get().getSecondsSinceDeath());
+    }
+
+    public String[] getNamesInTimeout(int timeout)
+    {
+        return getNamesInTimeout(timeout, false);
+    }
+    public String[] getNamesInTimeout(int timeout, boolean ignorePardon)
+    {
+        return this.entries.stream()
+                .filter(x -> x.getSecondsSinceDeath() < timeout)
+                .filter(x -> !x.isPardonLastDeath() || ignorePardon)
+                .map(DeathTimeEntry::getProfile)
+                .filter(Objects::nonNull)
+                .map(GameProfile::getName)
+                .toArray(String[]::new);
+    }
+
+    public String[] getNames()
+    {
+        return this.entries.stream()
+                .map(DeathTimeEntry::getProfile)
+                .filter(Objects::nonNull)
+                .map(GameProfile::getName)
+                .toArray(String[]::new);
     }
 
     private void read()
