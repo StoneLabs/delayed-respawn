@@ -3,8 +3,14 @@ package net.stone_labs.delayedrespawn.deathtime;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.GameRules;
+import net.stone_labs.delayedrespawn.DelayedRespawn;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,11 +27,9 @@ public class DeathTimeFile
     private static final DeathTimeFile INSTANCE = new DeathTimeFile("./timeouts.json");
     public static DeathTimeFile getInstance() { return INSTANCE; }
 
-    private long secondsTillReconnect = 60;
     private List<DeathTimeEntry> entries = new ArrayList<>();
 
-    @Expose(serialize = false)
-    private final transient Path file;
+    private final Path file;
     private final transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public DeathTimeFile(String file)
@@ -62,11 +66,6 @@ public class DeathTimeFile
         return entry.map(DeathTimeEntry::getTimeoutSeconds);
     }
 
-    public long getDeathTimeoutLength()
-    {
-        return secondsTillReconnect;
-    }
-
     public String[] getNames()
     {
         return this.entries.stream().map(DeathTimeEntry::getProfile).filter(Objects::nonNull).map(GameProfile::getName).toArray(String[]::new);
@@ -84,24 +83,14 @@ public class DeathTimeFile
         write();
     }
 
-    public void setDeathTimeoutLength(long seconds)
-    {
-        this.secondsTillReconnect = seconds;
-
-        write();
-    }
-
     private void read()
     {
         try
         {
             String content = new String(Files.readAllBytes(file));
-            DeathTimeFile data = gson.fromJson(content, DeathTimeFile.class);
-
-            this.secondsTillReconnect = data.secondsTillReconnect;
-            this.entries = data.entries;
+            this.entries = gson.fromJson(content, new TypeToken<List<DeathTimeEntry>>(){}.getType());
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
             throw new RuntimeException("Could not read timeout file!");
@@ -112,9 +101,9 @@ public class DeathTimeFile
     {
         try
         {
-            Files.write(file, gson.toJson(this).getBytes());
+            Files.write(file, gson.toJson(this.entries).getBytes());
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
             throw new RuntimeException("Could not write timeout file!");

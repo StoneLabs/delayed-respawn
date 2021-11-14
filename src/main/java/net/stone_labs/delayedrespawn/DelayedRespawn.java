@@ -2,6 +2,9 @@ package net.stone_labs.delayedrespawn;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.MessageType;
@@ -9,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.GameRules;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +26,8 @@ public class DelayedRespawn implements DedicatedServerModInitializer
         public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server)
         {
             long secondsSinceDeath = DeathTimeFile.getInstance().getSecondsSinceDeath(handler.player).orElse(Long.MAX_VALUE);
-            long secondsTillReconnect = DeathTimeFile.getInstance().getDeathTimeoutLength();
+            int secondsTillReconnect = DelayedRespawn.getDeathTimeoutLength(server);
+
             if (secondsSinceDeath < secondsTillReconnect)
             {
                 long timeout = secondsTillReconnect - secondsSinceDeath;
@@ -50,4 +55,11 @@ public class DelayedRespawn implements DedicatedServerModInitializer
         ServerPlayConnectionEvents.JOIN.register(new PlayerJoinEvent());
         LOGGER.log(Level.INFO, "Initialized {} version {}", MOD_NAME, VERSION);
     }
+
+    public static int getDeathTimeoutLength(MinecraftServer server)
+    {
+        return server.getGameRules().get(DelayedRespawn.DEATH_TIMEOUT).get();
+    }
+
+    public static final GameRules.Key<GameRules.IntRule> DEATH_TIMEOUT = GameRuleRegistry.register("deathTimeout", GameRules.Category.PLAYER, GameRuleFactory.createIntRule(60, 0));
 }
