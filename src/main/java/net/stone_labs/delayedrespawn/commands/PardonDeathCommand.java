@@ -35,6 +35,13 @@ public class PardonDeathCommand
                                         DeathTimeFile.getInstance().getNamesInTimeout(
                                                 DelayedRespawn.getDeathTimeoutLength(context.getSource().getServer())), builder))
                         .executes((context) -> pardonDeath(context.getSource(), getProfileArgument(context, "targets")))));
+        dispatcher.register(literal("unpardon-death")
+                .requires((source) -> source.hasPermissionLevel(2))
+                .then(argument("targets", GameProfileArgumentType.gameProfile())
+                        .suggests((context, builder) ->
+                                CommandSource.suggestMatching(
+                                        DeathTimeFile.getInstance().getPardonedNames(), builder))
+                        .executes((context) -> unpardonDeath(context.getSource(), getProfileArgument(context, "targets")))));
     }
 
     private static int pardonDeath(ServerCommandSource source, Collection<GameProfile> targets) throws CommandSyntaxException
@@ -48,6 +55,26 @@ public class PardonDeathCommand
                 DeathTimeFile.getInstance().pardonLastDeath(gameProfile);
                 ++i;
                 source.sendFeedback(new LiteralText("Pardoning the last death of " + gameProfile.getName()), true);
+            }
+        }
+
+        if (i == 0)
+            throw NO_EFFECTIVE_PARDON.create();
+        else
+            return i;
+    }
+
+    private static int unpardonDeath(ServerCommandSource source, Collection<GameProfile> targets) throws CommandSyntaxException
+    {
+        int i = 0;
+
+        for (GameProfile gameProfile : targets)
+        {
+            if (DeathTimeFile.getInstance().containsPlayer(gameProfile))
+            {
+                DeathTimeFile.getInstance().unpardonLastDeath(gameProfile);
+                ++i;
+                source.sendFeedback(new LiteralText("Un-pardoning the last death of " + gameProfile.getName()), true);
             }
         }
 

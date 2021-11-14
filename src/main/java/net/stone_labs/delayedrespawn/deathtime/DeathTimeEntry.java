@@ -47,6 +47,11 @@ public class DeathTimeEntry
         this.pardonLastDeath = true;
     }
 
+    protected void unpardonLastDeath()
+    {
+        this.pardonLastDeath = false;
+    }
+
     protected void setToNow()
     {
         this.lastDeath = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
