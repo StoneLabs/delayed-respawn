@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import net.stone_labs.delayedrespawn.DelayedRespawn;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,13 +19,16 @@ public class PlayerDeathMixin
     @Inject(at = @At(value = "TAIL"), method = "onDeath", cancellable = true)
     private void onPlayerDeath(DamageSource source, CallbackInfo info)
     {
+        //noinspection ConstantConditions
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
         MinecraftServer server = player.getServer();
+
+        assert server != null;
 
         DeathTimeFile.getInstance().registerDeath(player);
         player.networkHandler.disconnect(new LiteralText("You died :(\nYou can reconnect once your cooldown has expired."));
 
-        long timeout = DeathTimeFile.getInstance().getDeathTimeoutLength();
+        long timeout = DelayedRespawn.getDeathTimeoutLength(server);
         server.getPlayerManager().broadcast(new LiteralText(
                 String.format("%s died and has to take %sh %sm %ss timeout.",
                         player.getEntityName(), timeout / 60 / 60, timeout / 60 % 60, timeout % 60)
