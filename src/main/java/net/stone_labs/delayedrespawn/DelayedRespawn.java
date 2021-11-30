@@ -18,7 +18,7 @@ public class DelayedRespawn implements DedicatedServerModInitializer
 
     public static final String MOD_ID = "delayedrespawn";
     public static final String MOD_NAME = "Delayed Respawn";
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.3.0";
 
     @Override
     public void onInitializeServer()
