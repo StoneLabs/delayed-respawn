@@ -1,10 +1,22 @@
+<img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/StoneLabs/delayed-respawn/build/master?label=master&style=flat-square"> <img alt="GitHub issues" src="https://img.shields.io/github/issues/StoneLabs/delayed-respawn?style=flat-square"> <img alt="Version" src="https://img.shields.io/badge/Minecraft%20Version-1.18-blue?style=flat-square"> <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/StoneLabs/delayed-respawn?style=flat-square"> <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/StoneLabs/delayed-respawn/total?color=blue&label=downloads&style=flat-square">
+
+<img src="https://user-images.githubusercontent.com/19885942/144099416-36a55ce9-36da-4b84-8be0-e00bab08678c.png" align="right" width="250" />
+
 # Delayed Respawn
 
 Server side mod that will deny your connection if you died within the last X hours.
 
+<img src="https://user-images.githubusercontent.com/19885942/144099533-582db778-3265-4ac9-8e6a-1f7fb4a49822.png" align="right" width="250" />
+
+## Details
+
+Its quite simple. You die, you take a timeout. Semi-hardcore so to speak. These are saved in `timeouts.json` in your server directory.
+
+Operators can pardon deaths using `/pardon-death` and `/unpardon-death`, or list them using `/timeouts`. The duration of the timeout in seconds can be adjusted using the `deathTimeout` gamerule.
+
 ## Download
 
-See release page.
+[See release page.](https://github.com/StoneLabs/delayed-respawn/releases)
 
 ## License
 
