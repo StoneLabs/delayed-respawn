@@ -1,10 +1,8 @@
 package net.stone_labs.delayedrespawn.mixin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.network.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.stone_labs.delayedrespawn.DelayedRespawn;
@@ -31,13 +29,13 @@ public class PlayerManagerMixin
         Optional<Integer> secondsLeft = DeathTimeFile.getInstance().getSecondsLeftInTimeout(profile, DelayedRespawn.getDeathTimeoutLength(server));
         if (secondsLeft.isPresent())
         {
-            info.setReturnValue(new LiteralText(
+            info.setReturnValue(Text.literal(
                     String.format("You still have to wait %s before connecting.", Utils.FormatDuration(secondsLeft.get()))
             ).formatted(Formatting.RED));
-            server.getPlayerManager().broadcast(new LiteralText(
+            server.getPlayerManager().broadcast(Text.literal(
                     String.format("%s tried to join the game (%s timeout left)",
                             profile.getName(), Utils.FormatDuration(secondsLeft.get()))
-            ).formatted(Formatting.YELLOW), MessageType.CHAT, profile.getId());
+            ).formatted(Formatting.YELLOW), false);
         }
     }
 }

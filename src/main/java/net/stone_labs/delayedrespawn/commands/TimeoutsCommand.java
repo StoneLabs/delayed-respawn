@@ -99,7 +99,7 @@ public class TimeoutsCommand
             builder.append(" {\"text\":\">>>>\",\"underlined\":true,\"color\":\"aqua\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/timeouts %d\"}}, ".formatted(page + 1));
 
         builder.append("\"\"]");
-        //return new LiteralText(builder.toString());
+        //return Text.literal(builder.toString());
         return Text.Serializer.fromJson(builder.toString());
     }
 }
