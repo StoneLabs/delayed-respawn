@@ -1,7 +1,7 @@
 package net.stone_labs.delayedrespawn;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +18,7 @@ public class DelayedRespawn implements DedicatedServerModInitializer
 
     public static final String MOD_ID = "delayedrespawn";
     public static final String MOD_NAME = "Delayed Respawn";
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.4.0";
 
     @Override
     public void onInitializeServer()
@@ -26,8 +26,8 @@ public class DelayedRespawn implements DedicatedServerModInitializer
         LOGGER.log(Level.INFO, "Initialized {} version {}", MOD_NAME, VERSION);
 
         // Add command to display artifacts for debugging
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> PardonDeathCommand.register(dispatcher));
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> TimeoutsCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PardonDeathCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TimeoutsCommand.register(dispatcher));
     }
 
     public static int getDeathTimeoutLength(MinecraftServer server)

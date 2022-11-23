@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.stone_labs.delayedrespawn.DelayedRespawn;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 
@@ -19,7 +19,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class PardonDeathCommand
 {
-    private static final SimpleCommandExceptionType NO_EFFECTIVE_PARDON = new SimpleCommandExceptionType(new LiteralText("No death to pardon"));
+    private static final SimpleCommandExceptionType NO_EFFECTIVE_PARDON = new SimpleCommandExceptionType(Text.literal("No death to pardon"));
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher)
     {
@@ -50,7 +50,7 @@ public class PardonDeathCommand
             {
                 DeathTimeFile.getInstance().pardonLastDeath(gameProfile);
                 ++i;
-                source.sendFeedback(new LiteralText("Pardoning the last death of " + gameProfile.getName()), true);
+                source.sendFeedback(Text.literal("Pardoning the last death of " + gameProfile.getName()), true);
             }
         }
 
@@ -70,7 +70,7 @@ public class PardonDeathCommand
             {
                 DeathTimeFile.getInstance().unpardonLastDeath(gameProfile);
                 ++i;
-                source.sendFeedback(new LiteralText("Un-pardoning the last death of " + gameProfile.getName()), true);
+                source.sendFeedback(Text.literal("Un-pardoning the last death of " + gameProfile.getName()), true);
             }
         }
 
