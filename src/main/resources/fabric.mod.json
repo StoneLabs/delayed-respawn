@@ -19,7 +19,9 @@
   "environment": "*",
   "entrypoints": {
     "main": [],
-    "client": [],
+    "client": [
+      "net.stone_labs.delayedrespawn.ClientWarning"
+    ],
     "server": [
       "net.stone_labs.delayedrespawn.DelayedRespawn"
     ]
