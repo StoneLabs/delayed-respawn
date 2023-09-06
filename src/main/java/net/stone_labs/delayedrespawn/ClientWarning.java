@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
@@ -24,11 +25,12 @@ public class ClientWarning implements ClientModInitializer
             if (hide)
                 return;
 
-            MinecraftClient.getInstance().textRenderer.draw(stack, Text.literal("§4Warning: Delayed Respawn is a dedicated server only mod."), 2, 2, 1);
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, Text.literal("§fIt will not work when installed on client minecraft."), 2, 12, 1);
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, Text.literal("§fThis might change in the future. For updates and questions"), 2, 27, 1);
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, Text.literal("§frefer to https://github.com/StoneLabs/delayed-respawn."), 2, 37, 1);
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, Text.literal("§fPress ").append(Text.keybind("Hide client warning")).append(Text.literal(" §fto hide this warning.")), 2, 50, 1);
+            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            stack.drawText(textRenderer, Text.literal("§4Warning: Delayed Respawn is a dedicated server only mod."), 2, 2, 1, true);
+            stack.drawText(textRenderer, Text.literal("§fIt will not work when installed on client minecraft."), 2, 12, 1, true);
+            stack.drawText(textRenderer, Text.literal("§fThis might change in the future. For updates and questions"), 2, 27, 1, true);
+            stack.drawText(textRenderer, Text.literal("§frefer to https://github.com/StoneLabs/delayed-respawn."), 2, 37, 1, true);
+            stack.drawText(textRenderer, Text.literal("§fPress ").append(Text.keybind("Hide client warning")).append(Text.literal(" §fto hide this warning.")), 2, 50, 1, true);
 
         });
         var keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(

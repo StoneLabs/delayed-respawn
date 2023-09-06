@@ -9,6 +9,7 @@ import net.stone_labs.delayedrespawn.Utils;
 import net.stone_labs.delayedrespawn.deathtime.DeathTimeFile;
 
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -66,7 +67,7 @@ public class TimeoutsCommand
                         x.isPardonLastDeath()))
                 .collect(Collectors.toList());
 
-        source.sendFeedback(listPage(data, page), false);
+        source.sendFeedback(() -> listPage(data, page), false);
         return 0;
     }
 
