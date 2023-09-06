@@ -50,7 +50,7 @@ public class PardonDeathCommand
             {
                 DeathTimeFile.getInstance().pardonLastDeath(gameProfile);
                 ++i;
-                source.sendFeedback(Text.literal("Pardoning the last death of " + gameProfile.getName()), true);
+                source.sendFeedback(() -> Text.literal("Pardoning the last death of " + gameProfile.getName()), true);
             }
         }
 
@@ -70,7 +70,7 @@ public class PardonDeathCommand
             {
                 DeathTimeFile.getInstance().unpardonLastDeath(gameProfile);
                 ++i;
-                source.sendFeedback(Text.literal("Un-pardoning the last death of " + gameProfile.getName()), true);
+                source.sendFeedback(() -> Text.literal("Un-pardoning the last death of " + gameProfile.getName()), true);
             }
         }
 
